@@ -1,0 +1,29 @@
+{
+  "name": "bfs",
+  "version": "1.0.0",
+  "description": "Final Project On Node",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelatuma1/nodebfs.git"
+  },
+  "keywords": [
+    "Breadth",
+    "First",
+    "Search",
+    "Backend",
+    "API"
+  ],
+  "author": "Samuel Atuma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samuelatuma1/nodebfs/issues"
+  },
+  "homepage": "https://github.com/samuelatuma1/nodebfs#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
