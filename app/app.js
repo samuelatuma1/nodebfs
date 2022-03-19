@@ -1,7 +1,7 @@
 const http = require("http")
 const fs = require("fs")
 const { ContentType } = require("./utils")
-const { home, addUser, signIn, postSignIn, userHomePage, showhomepage, searchFriends } = require("./controller.js")
+const { home, addUser, signIn, postSignIn, userHomePage, showhomepage, searchFriends, addFriend, updateStatus, fetchFriends, reaction} = require("./controller.js")
 const server = http.createServer((req, res) => {
     
     if(req.url === '/'){
@@ -21,11 +21,33 @@ const server = http.createServer((req, res) => {
     }
     else if (req.url === '/homepage'){
         return showhomepage(req, res)
-        return userHomePage(req, res)
+        
     }
-    else if (req.url.match(/\/searchFriends\?data=[a-zA-Z]/)){
+    else if (req.url.match(/\/searchFriends\?data=[a-zA-Z0-9]/)){
         
         return searchFriends(req, res)
+    }
+
+    else if(req.url.match(/\/addFriend\?friend=[a-zA-Z0-9]/)){
+       
+        return addFriend(req, res)
+    }
+    else if(req.url === `/updateStatus` && req.method === 'PUT'){
+        return updateStatus(req, res)
+    }
+    else if (req.url === '/fetchFriends' && req.method === 'GET'){
+        res.writeHead(200, {"Content-Type" : "application/json"})
+        fetchFriends(req, res)
+        
+    }
+    else if(req.url === '/react' && req.method === 'POST'){
+        console.log("Seen friends Reaction")
+        return reaction(req, res)
+    }
+    else{
+        res.writeHead(404, {"Content-Type" : "text/html"})
+        const readPage = fs.createReadStream(__dirname + '/templates/404.html')
+        readPage.pipe(res)
     }
 })
 

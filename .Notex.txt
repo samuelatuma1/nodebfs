@@ -1,1 +1,1 @@
-Stopped at homepage.html, line 78
+Stopped at controller.addFriend, line 82

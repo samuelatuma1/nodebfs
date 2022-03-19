@@ -33,6 +33,27 @@
             </ul>
         </details>
     </section>
+
+    <section aria-label="update Status">
+        <h2>Update Status</h2>
+        <label for="status">
+            Update Status : <input id="status" type="text">
+            
+        </label>
+        <button id="update">Update Status</button>
+    </section>
+    
+    <section aria-label="view Friends">
+        <details>
+            <summary id="viewFriends">View Friends</summary>
+            <P>My friends list</P>
+            <ul id="friendsData">
+                
+            </ul>
+        </details>
+    </section>
+
+
     <script>
         const verifyNotEmpty = (text) => {
             let notEmpty = 'true'
@@ -72,16 +93,136 @@
                ul.innerHTML += `<li>${data} <button id='${data}' class='addFriend'>Add Friend</button>`
            }
        }
+       /** 
+        * 
+       */
+      const addToFriendsList = async (user) => {
+        
+        const add = await fetch(`http://localhost:8000/addFriend?friend=${user}`)
+        const res = await add.text()
+        alert(res)
+      }
+
        const checkAddFriend = (e) => {
             const clicked = e.target
             if(clicked.classList.contains('addFriend')){
-                // Start Here Tomorrow
-                alert("Ouch")
+                addToFriendsList(clicked.id)
             }
        }
        document.body.addEventListener("click", checkAddFriend)
 
        
+
+       const statusBtn = document.querySelector("#update")
+       const updateStatus = async (e) => {
+           const newStatus = document.querySelector("#status").value
+           const update = await fetch(`http://localhost:8000/updateStatus`, {
+               method : "PUT",
+               credentials: "same-origin",
+               headers:{
+                   "Content-Type" : 'application/json'
+               },
+               body : JSON.stringify({newStatus})
+           })
+
+           const res = await update.text()
+           alert(res)
+       }
+       statusBtn.addEventListener("click", updateStatus)
+
+       const viewFriends = document.querySelector('#viewFriends')
+       let friends; 
+
+       const viewFriendsList = async (e) => {
+            const fetchFriends = await fetch('http://localhost:8000/fetchFriends', {
+                method : "GET",
+                credentials : 'same-origin'
+            })
+            const friendsList = await fetchFriends.json()
+            friends = friendsList
+            buildRes(friendsList)
+       }
+       viewFriends.addEventListener("click", viewFriendsList)
+
+
+       function buildRes(friendsList) {
+           friendsList.forEach((friend, index) => {
+                const details = document.createElement("details")
+                details.innerHTML = `
+                <summary>${friend.username}</summary>
+                <p>Skill : ${friend.skill || "No skill specified"}</p>
+                <p>Status : ${friend.status.status || "Hey there, I use BFS"} </p>
+                `
+
+                const btn = document.createElement("button")
+                btn.classList.add("Like")
+                console.log(friend.status)
+                const status = friend.status.likes || {}
+
+                let likeCount = 0
+                for(let item in status){
+                    likeCount += 1
+                }
+                console.log(friend.status)
+                const liked = status.hasOwnProperty(sessionStorage.getItem("user"))
+                console.log(sessionStorage.getItem("user"), liked)
+                if(liked){
+                    btn.innerHTML = `${likeCount} &#10084; Liked` // Red colored heart
+                }
+                else{
+                    btn.innerHTML = `${likeCount} &#9825; Like` // Uncolored heart
+                }
+
+                
+
+
+                btn.id = friend.username
+                btn.setAttribute("data-likes", likeCount)
+                btn.setAttribute('data-idx', index)
+                details.appendChild(btn)
+                btn.onclick = react
+                const friendsData = document.querySelector('#friendsData')
+                friendsData.appendChild(details)
+           })
+
+           function react(e){
+               const clicked = e.target
+               let likes = Number(clicked.getAttribute("data-likes"))
+               const friendIdx = clicked.getAttribute("data-idx") || -1
+               const reactData = {
+                   user : friends[friendIdx],
+                   liked : true
+               }
+               if(friendIdx >= 0){
+                   // If image liked, unlike
+                   // mockDiv just converts unicode from text to Reak Unicode for better comparison with btn unicode
+                   let mockDiv = document.createElement("div")
+                   mockDiv.innerHTML = `${likes} &#10084; Liked`
+                   console.log("res : ", clicked.innerHTML === mockDiv.innerHTML  )
+                   
+                   if(clicked.innerText === mockDiv.innerHTML){
+                       clicked.innerHTML = `${likes - 1} &#9825; Like`
+                       reactData.liked = false
+                   }
+
+                   else{
+                       clicked.innerHTML =   `${likes + 1} &#10084; Liked`
+                   }
+
+                   fetch("http://localhost:8000/react", {
+                       method : "POST",
+                       credentials: 'same-origin',
+                       headers : {
+                           "Content-Type" : "application/json"
+                       },
+                       body  : JSON.stringify(reactData)
+
+                   })
+
+               }
+
+           }
+       }
 
     </script>
 </body>
