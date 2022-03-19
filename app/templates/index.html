@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="../static/index.css"> -->
+</head>
+<body>
+    <h1>Welcome to Breadth First Search.</h1>
+    <a href="http://localhost:8000/signin">Sign In</a>
+    <h1>Sign Up</h1>
+    <form>
+        <p>
+            Username : <input id="username" minlength="1" required>
+        </p>
+       <p>
+           Password :  <input id="password" minlength="1" required>
+       </p>
+        <p>
+            Skill : <input id="skill" minlength="1" required>
+        </p>
+        <button>Sign Up</button>
+    </form>
+
+    <script>
+        const form = document.querySelector("form")
+        const submitForm = (e) => {
+            e.preventDefault()
+            const username = document.querySelector("#username").value
+            const password = document.querySelector("#password").value
+            const skill = document.querySelector("#skill").value
+
+            const formData = new FormData()
+            formData.append("username", username)
+            formData.append("password", password)
+            formData.append("skill", skill)
+
+            const formObject = {username, password, skill}
+            console.log(formObject)
+
+            fetch('/addUser', {
+                method : "POST",
+                "credentials" : "same-origin",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify(formObject)
+            }).then(data => data.text()).then(res => {alert(res)})
+        }
+        form.addEventListener("submit", submitForm)
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: black;
+            color: burlywood;
+            font-family: verdana;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome User</h1>
+
+    <section aria-label="search" id="search">
+        <header>
+            <h2>Search Friends</h2>
+        </header>
+        <main>
+            Search : <input id="searchInput">
+            <br>
+            <button id="searchBtn">Search Friends</button>
+        </main>
+        <!-- The details tag is cool -->
+        <details>
+            <summary>List data</summary>
+            <ul id="searchRes">
+
+            </ul>
+        </details>
+    </section>
+    <script>
+        const verifyNotEmpty = (text) => {
+            let notEmpty = 'true'
+            if (text.length === 0) return false
+            let start = text[0]
+            if (start !== ' ') return true
+            for (let char of text){
+                if(char !== ' ') return true
+            }
+            return false
+        }
+       const searchBtn = document.querySelector("#searchBtn")
+       searchBtn.addEventListener("click", (e) => {
+        searchInput = document.querySelector("#searchInput").value
+        if(verifyNotEmpty(searchInput)) {
+            return getFriends(searchInput)
+
+        }
+        else{
+            alert('Invalid input')
+        }
+       })
+
+       async function getFriends(search){
+           const fetchFriends = await fetch(`http://localhost:8000/searchFriends?data=${search}`, {
+               method : 'GET',
+               credentials:"same-origin",
+                
+           })
+
+           const allMatches = await fetchFriends.json()
+           console.log(allMatches)
+           const ul = document.querySelector("#searchRes")
+           ul.innerHTML = ''
+           for(let data of allMatches){
+               
+               ul.innerHTML += `<li>${data} <button id='${data}' class='addFriend'>Add Friend</button>`
+           }
+       }
+       const checkAddFriend = (e) => {
+            const clicked = e.target
+            if(clicked.classList.contains('addFriend')){
+                // Start Here Tomorrow
+                alert("Ouch")
+            }
+       }
+       document.body.addEventListener("click", checkAddFriend)
+
+       
+
+    </script>
+</body>
+</html>

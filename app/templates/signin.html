@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Sign In</h1>
+    <form>
+        <p>
+            Username : <input id="username" minlength="1" required>
+        </p>
+       <p>
+           Password :  <input id="password" minlength="1" required>
+       </p>
+        <button>Sign In</button>
+    </form>
+
+    <script>
+         const form = document.querySelector("form")
+        const submitForm = (e) => {
+            e.preventDefault()
+            const username = document.querySelector("#username").value
+            const password = document.querySelector("#password").value
+
+            const formData = new FormData()
+            formData.append("username", username)
+            formData.append("password", password)
+   
+
+            const formObject = {username, password}
+            console.log(formObject)
+            const signIn = async () => {
+                const signInRes = await fetch("/signin", {
+                    method : "POST",
+                    "credentials" : "same-origin",
+                    "headers" : {
+                        "Content-Type" : "application/json"
+                    },
+                    body : JSON.stringify(formObject)
+                })
+                const res = await signInRes.json()
+                if (res.status_code == 201) {
+                    console.log("Successful")
+                    sessionStorage.setItem("user", formObject.username)
+                    alert("You have successfully logged in")
+                    window.location.href = 'http://localhost:8000/homepage'
+                }
+                else{
+                    console.log("Failed")
+                    alert("Incorrect Username or Password. Please try again")
+                }
+
+                
+            }
+
+            signIn()
+
+        }
+        form.addEventListener("submit", submitForm)
+    </script>
+</body>
+</html>
