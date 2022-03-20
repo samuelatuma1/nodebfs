@@ -25,3 +25,13 @@
 
 // console.log(process.env)
 
+function multiplyOrAdd(...args) {
+    if(args.includes(0)){
+        return args.reduce((prev, curr) => prev + curr)
+    }
+    else{
+        return args.reduce((prev, curr) => prev * curr)
+    }
+}
+
+console.log(multiplyOrAdd(1, 2, 3, 3, 2, 0))

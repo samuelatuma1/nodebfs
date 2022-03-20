@@ -1,7 +1,7 @@
 const http = require("http")
 const fs = require("fs")
 const { ContentType } = require("./utils")
-const { home, addUser, signIn, postSignIn, userHomePage, showhomepage, searchFriends, addFriend, updateStatus, fetchFriends, reaction} = require("./controller.js")
+const { home, addUser, signIn, postSignIn, userHomePage, showhomepage, searchFriends, addFriend, updateStatus, fetchFriends, reaction, BFSSkll} = require("./controller.js")
 const server = http.createServer((req, res) => {
     
     if(req.url === '/'){
@@ -43,6 +43,10 @@ const server = http.createServer((req, res) => {
     else if(req.url === '/react' && req.method === 'POST'){
         console.log("Seen friends Reaction")
         return reaction(req, res)
+    }
+
+    else if(req.url === '/searchSkill' && req.method === 'POST'){
+        return BFSSkll(req, res)
     }
     else{
         res.writeHead(404, {"Content-Type" : "text/html"})

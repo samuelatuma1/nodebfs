@@ -54,7 +54,32 @@
     </section>
 
 
+    <section aria-label='search skill'>
+        <header>
+            <h2>Search Skill</h2>
+        </header>
+
+        <p>
+            <label for="searchSkill">
+                Search Skill : <input id="searchSkill">
+                <button id="skillBtn">Search Skill</button>
+            </label>
+            <main>
+                <details >
+                    <summary>Skill Result</summary>
+                    <main id="skillRes"></main>
+                    <section label="rel" id="rel"></section>
+                </details>
+            </main>
+        </p>
+    </section>
+
+
     <script>
+        /**
+         * @param {String} text : -> String representation of data to verify
+         * @returns true if text is empty or contains only white space
+        */
         const verifyNotEmpty = (text) => {
             let notEmpty = 'true'
             if (text.length === 0) return false
@@ -222,6 +247,48 @@
                }
 
            }
+       }
+
+       const skillBtn = document.querySelector("#skillBtn")
+
+       const searchSkill = async (e) => {
+           const skillInput = document.querySelector("#searchSkill").value
+           if(verifyNotEmpty(skillInput)){
+                const fetchSearch = await fetch('http://localhost:8000/searchSkill', {
+                    method : "POST",
+                    credentials:"same-origin",
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }, 
+                    body : JSON.stringify({skill : skillInput})
+                })
+                
+                if(fetchSearch.ok){
+                    const res = await fetchSearch.json()
+                    console.log(res)
+
+                    if (res.firstFound !== null){
+                        const skillRes = document.querySelector("#skillRes")
+                        skillRes.innerText = `Here is your closest relationship ${res.firstFound}`
+
+                        return showRel(res.parents)
+
+                    }
+                    else{
+                        alert(`You are not connected to anybody with Skill : ${skillInput}`)
+                    }
+                }
+               else{
+                alert("Bad request")
+               }
+           }
+           else {alert("Error: Invalid input")}
+       }
+
+       skillBtn.addEventListener("click", searchSkill)
+
+       function showRel(parents){
+           alert("Hi")
        }
 
     </script>

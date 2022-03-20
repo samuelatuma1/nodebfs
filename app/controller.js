@@ -2,7 +2,7 @@ const path = require("path")
 const fs = require("fs")
 
 const { ContentType, loadData, setSession, getSession, usePath } = require("./utils")
-const { addUserData, getUserOr404, userDetails, friendsMatch, follow, updateUserStatus, fetchFriendsData, reactToStatus } = require("./models")
+const { addUserData, getUserOr404, userDetails, friendsMatch, follow, updateUserStatus, fetchFriendsData, reactToStatus, breadthSearch } = require("./models")
 
 html_files = path.join(__dirname, 'templates')
 
@@ -103,8 +103,19 @@ const reaction = async (req, res) => {
     const signedIn = await getSession("signedIn")
     
     const statusReaction = await reactToStatus(data, signedIn)
-    
+    res.writeHead(200, {"Content-Type" : "application/json"})
     res.end(data)
 }
 
-module.exports = { home, addUser, signIn, postSignIn, userHomePage, showhomepage, searchFriends, addFriend, updateStatus , fetchFriends, reaction }
+const BFSSkll = async (req, res) => {
+    const skill = JSON.parse((await loadData(req)))
+    const signedIn = await getSession("signedIn")
+    const searchRes = await breadthSearch(skill.skill, signedIn)
+    console.log(searchRes)
+    res.writeHead(201, {"Content-Type" : "application/json"})
+    res.end(searchRes)
+    console.log(searchRes)
+    
+}
+
+module.exports = { home, addUser, signIn, postSignIn, userHomePage, showhomepage, searchFriends, addFriend, updateStatus , fetchFriends, reaction, BFSSkll  }

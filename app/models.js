@@ -175,4 +175,52 @@ const reactToStatus = (reaction, signedIn) => {
     })
     
 }
-module.exports = { addUserData, getUserOr404, userDetails, friendsMatch, follow, updateUserStatus, fetchFriendsData, reactToStatus}
+
+/**
+ * 
+ * @param {String} skill A string representation of the skill the user is searching for
+ * @param {String} signedIn The signed in user Name
+ * @returns JSON Object response {
+                    firstFound : String , 
+                    parents : Object[follower : following]
+                }
+ */
+const breadthSearch = (skill, signedIn) => {
+    return new Promise((resolve) => {
+        const frontier = [signedIn]
+        const explored = []
+        const parents = {signedIn : null}
+        let firstFound = null;
+        while (frontier.length > 0){
+            // Use the queue Data Structure for breadth First Search
+            const curr_explored_name = frontier.shift()
+            const curr_explored = users[curr_explored_name]
+            const curr = {"username":"f","password":"12345","skill":"florist","followers":[],"status":{"status":"Hey, I use bfs","likes":{}}}
+            if (curr_explored.skill.includes(skill)){
+                firstFound = curr_explored_name
+                return resolve(JSON.stringify({
+                    firstFound, parents
+                }))
+            }
+
+            else{
+                for(let follower of curr_explored.followers){
+                    if (!explored.includes(follower)) {
+                        frontier.push(follower)
+
+                    }
+                    if(!parents.hasOwnProperty(follower)){
+                        parents[follower] = curr_explored
+                    }
+                }
+            }
+            explored.push(curr_explored)
+        }
+
+        return resolve(JSON.stringify({
+            firstFound, parents
+        }))
+    })
+
+}
+module.exports = { addUserData, getUserOr404, userDetails, friendsMatch, follow, updateUserStatus, fetchFriendsData, reactToStatus, breadthSearch}
