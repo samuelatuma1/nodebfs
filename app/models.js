@@ -199,7 +199,7 @@ const breadthSearch = (skill, signedIn) => {
             if (curr_explored.skill.includes(skill)){
                 firstFound = curr_explored_name
                 return resolve(JSON.stringify({
-                    firstFound, parents
+                    firstFound, parents, signedIn : signedIn
                 }))
             }
 
@@ -210,7 +210,7 @@ const breadthSearch = (skill, signedIn) => {
 
                     }
                     if(!parents.hasOwnProperty(follower)){
-                        parents[follower] = curr_explored
+                        parents[follower] = curr_explored_name
                     }
                 }
             }
@@ -218,7 +218,7 @@ const breadthSearch = (skill, signedIn) => {
         }
 
         return resolve(JSON.stringify({
-            firstFound, parents
+            firstFound, parents, signedIn: signedIn
         }))
     })
 

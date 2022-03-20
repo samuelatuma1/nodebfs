@@ -271,7 +271,7 @@
                         const skillRes = document.querySelector("#skillRes")
                         skillRes.innerText = `Here is your closest relationship ${res.firstFound}`
 
-                        return showRel(res.parents)
+                        return showRel(res.firstFound, res.signedIn, res.parents)
 
                     }
                     else{
@@ -287,8 +287,28 @@
 
        skillBtn.addEventListener("click", searchSkill)
 
-       function showRel(parents){
-           alert("Hi")
+       function showRel(firstFound, signedIn,parents){
+               let start = parents[firstFound]
+               const rel = [firstFound]
+               while(start){
+                   rel.push(start)
+                   start = parents[start]
+               }
+               console.log(rel)
+               rel.reverse()
+               return displayRes(rel)
+       }
+
+       function displayRes(rel){
+           const relDiv = document.querySelector("#rel")
+            relDiv.innerText = "Here is how you can reach skill"
+            for(let userIdx = 0; userIdx < rel.length; userIdx++){
+                const user = rel[userIdx]
+                let li = document.createElement("li")
+                if (userIdx == 0) li.innerHTML = user + ' (You)'
+                else li.innerHTML = user
+                relDiv.appendChild(li)
+            }
        }
 
     </script>
